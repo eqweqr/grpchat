@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log"
 
+	"github.com/eqweqr/chater/client"
 	"github.com/eqweqr/chater/server"
 )
 
@@ -27,7 +29,20 @@ import (
 // 	RedisClient *redis.Client
 // }
 
+var typer bool
+
 func main() {
-	srv := server.NewServer("0.0.0.0:6379")
-	log.Fatal(srv.Run(context.Background()))
+	flag.BoolVar(&typer, "server", false, "type of start app")
+	flag.Parse()
+	if typer {
+		srv := server.NewServer("0.0.0.0:6379")
+		log.Fatal(srv.Run(context.Background()))
+	} else {
+		cli, _ := client.NewClient()
+		// if err != nil {
+		// 	log.Fatal("cannot start client")
+		// }
+		log.Fatal(cli.Run(context.Background()))
+	}
+
 }

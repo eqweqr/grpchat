@@ -112,6 +112,12 @@ func (messageServer *server) Stream(srv pb.Chat_StreamServer) error {
 			return status.Error(codes.Internal, "cannot receive message")
 		}
 
+		value, err := messageServer.RedisClient.SetMessage(srv.Context(), req.Message, time.Hour)
+		log.Printf("id new message: %s", value)
+
+		if err != nil {
+			return status.Error(codes.Internal, "cannot save message to redis")
+		}
 		messageServer.Broadcast <- &pb.StreamResponse{
 			Message: req.Message,
 			Auth:    id.String(),
